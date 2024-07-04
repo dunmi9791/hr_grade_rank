@@ -31,13 +31,19 @@ class HrEmployee(models.Model):
 
     grade_id = fields.Many2one("grade.grade", "Grade")
     rank_id = fields.Many2one("rank.rank", "Rank")
-    
 
-    @api.onchange("grade_id")
-    def _onchange_grade(self):
-        res = {}
+    # @api.onchange("grade_id")
+    # def _onchange_grade(self):
+    #     res = {}
+    #     if self.grade_id:
+    #         self.rank_id = False
+    #         res["domain"] = {"rank_id": [
+    #             ("id", "in", self.grade_id.rank_ids.ids)]}
+    #     return res
+
+    @api.onchange('grade_id')
+    def _onchange_grade_id(self):
         if self.grade_id:
-            self.rank_id = False
-            res["domain"] = {"rank_id": [
-                ("id", "in", self.grade_id.rank_ids.ids)]}
-        return res
+            return {'domain': {'rank_id': [('grade_id', '=', self.grade_id.id)]}}
+        else:
+            return {'domain': {'rank_id': []}}
